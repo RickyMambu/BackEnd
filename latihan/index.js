@@ -1,33 +1,47 @@
-const http = require("http");
-const {getUsers} = require('./users')
-const moment = require('moment')
+const http = require('http')
+const express = require ('express')
+const app = express()
 
-const server = http.createServer((req, res) => {
-  res.statusCode = 200;
-  res.setHeader("Content-Type", "text/json");
+// app.get('/', (req, res) => res.send('Hello World!'))
 
-const url = req.url
-if (url === '/about'){
-  res.write(JSON.stringify({
-    status: 'success',
-    message: 'response success',
-    description : 'Excercise #2',
-    date: moment().format()
-  }))
-}
-else if (url === '/users'){
-  res.write(JSON.stringify(getUsers))
-}
-else{
-  res.statusCode = 200
-  res.write('This is homepage')
-}
-  res.end();
-});
+// //Method
+// app.get('/contoh', (req, res) => {
+//     res.send('request dengan method POST')
+// })
+// app.get('/about',(req,res) => res.status(200).json({
+//     status: 'success',
+//     message: 'About page',
+//     data: []
+// }))
 
-const hostname = "127.0.0.1";
-const port = 3000;
-server.listen(port, hostname, () => {
-  console.log(`Server running at http://${hostname}:${port}/`)});
+// app.post('/contoh', (req, res) => {
+//     res.send('request dengan method POST')
+// })
 
+// app.put('/contoh', (req, res) => {
+//     res.send('request dengan method PUT')
+// })
+
+// app.delete('/contoh', (req, res) => {
+//     res.send('request dengan method DELETE')
+// })
+
+// app.patch('/contoh', (req, res) => {
+//     res.send('request dengan method PATCH')
+// })
+
+
+
+//Routing Dinamis
+//1. Menggunakan params
+app.get('/post/:id', (req,res) => res.send(`Artikel ke - ${req.params.id}`))
+//2. Query String - bukan : tapi ?
+app.get('/post', (req,res) => {
+    const {page, sort} = req.query
+    res.send(`Query yang didapatkan adalah: ${page}, sort: ${sort}`)
+})
+
+const hostname = "127.0.0.1"
+const port = 3000
+app.listen(port, () => {console.log(`Server running at http://${hostname}:${port}/`)})
 

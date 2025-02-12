@@ -35,7 +35,13 @@ app.patch('/contoh', (req, res) => {
 //Routing Dinamis
 //1. Menggunakan params
 app.get('/post/:id', (req,res) => res.send(`Artikel ke - ${req.params.id}`))
+//2. Query String - bukan : tapi ?
+app.get('/post', (req,res) => {
+    const {page} = req.query
+    res.send(`Query yang didapatkan adalah: ${page}`)
+})
 
 const hostname = "127.0.0.1"
 const port = 3000
 app.listen(port, () => {console.log(`Server running at http://${hostname}:${port}/`)})
+
