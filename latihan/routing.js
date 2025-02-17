@@ -1,7 +1,3 @@
-const http = require('http')
-const express = require ('express')
-const app = express()
-
 app.get('/', (req, res) => res.send('Hello World!'))
 
 //Method
@@ -40,8 +36,3 @@ app.get('/post', (req,res) => {
     const {page} = req.query
     res.send(`Query yang didapatkan adalah: ${page}`)
 })
-
-const hostname = "127.0.0.1"
-const port = 3000
-app.listen(port, () => {console.log(`Server running at http://${hostname}:${port}/`)})
-
