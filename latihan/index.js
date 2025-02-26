@@ -1,46 +1,38 @@
-const http = require('http')
-const express = require ('express')
-const app = express()
-const moment = require('moment')
-const morgan = require('morgan')
-const errorhandler = require('errorhandler')
-const routers = require('./routers')
-
+const http = require("http");
+const moment = require("moment");
+const express = require("express");
+const morgan = require("morgan");
+// const errorhandler = require("errorhandler");
+const app = express();
+const routers = require("./routers");
+const path = require("path")
 
 //Middleware
 const log = (req, res, next) => {
-    console.log(moment().format("MMMM Do YYYY, h:mm:ss a") 
-    + " " + req.originalUrl + " " + req.ip);
-    next()
-}
-//Middleware using morgan
-app.use(morgan('tiny'))
+  console.log(
+    moment().format("h:mm:ss a") + " " + req.originalUrl + " " + req.ip
+  );
+  next();
+};
 
-//errorhandler
-// app.use(errorhandler)
+app.use(morgan("tiny"));
+// app.use(errorhandler);
+app.use(express.urlencoded({ extended: true }));
+app.use(express.static(path.join(__dirname, "public")))
 
-app.use(routers)
+//Routing
+app.use(routers);
 
-
-
-// //Routing Dinamis
-// //1. Menggunakan params
-// app.get('/post/:id', (req,res) => res.send(`Artikel ke - ${req.params.id}`))
-// //2. Query String - bukan : tapi ?
-// app.get('/post', (req,res) => {
-//     const {page} = req.query
-//     res.send(`Query yang didapatkan adalah: ${page}`)
-// })
-
+//Middleware untuk 404
 app.use((req, res, next) => {
-    res.status(404).json({
-        status: 'error',
-        message: 'resource tidak ditemukan',
+  res.status(404).json({
+    status: "error",
+    message: "resource tidak ditemukan",
+  });
+});
 
-    })
-})
-
-const hostname = "127.0.0.1"
-const port = 3000
-app.listen(port, () => {console.log(`Server running at http://${hostname}:${port}/`)})
-
+const hostname = "127.0.0.1";
+const port = 3000;
+app.listen(port, hostname, () =>
+  console.log(`Server running at http://${hostname}:${port}`)
+);
