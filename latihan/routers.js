@@ -1,7 +1,24 @@
 const express = require("express");
 const routers = express.Router();
 const path = require("path")
+const fs = require("fs")
+const multer = require("multer")
+const upload = multer({dest: 'public'})
 
+
+
+
+routers.post("/upload", upload.single("file"), (req, res) => {
+  const file = req.file
+  if (file){
+    const target = path.join(__dirname, "public", file.originalname)
+    fs.renameSync(file.path, target)
+    res.send("File berhasil diupload")
+  }
+  else{
+    res.send("File gagal diupload")
+  }
+})
 
 routers.get("/download", (req, res) => {
   const filename = "/th.jpg"
@@ -26,6 +43,15 @@ routers.post("/login", (req, res) => {
 });
 routers.get("/", (req, res) => res.send("Hello World"));
 routers.get("/about", (req, res) =>
+  res.status(200).json({
+    status: "success",
+    message: "About page",
+    data: [],
+  })
+);
+
+
+routers.put("/about", (req, res) =>
   res.status(200).json({
     status: "success",
     message: "About page",
