@@ -4,10 +4,22 @@ const path = require("path")
 const fs = require("fs")
 const multer = require("multer")
 const upload = multer({dest: 'public'})
+const client = require("./mongodb")
 
 
+routers.get("/users", async (req, res) => {
+  try{
+    const db = client.db("latihan")
+    const users = await db.collection("users").find().toArray()
+    res.json({
+      status: "success",
+      message: "list users",
+      data: users
+    })
+  } catch (error){
 
-
+  }
+})
 routers.post("/upload", upload.single("file"), (req, res) => {
   const file = req.file
   if (file){
