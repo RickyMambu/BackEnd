@@ -5,6 +5,110 @@ const fs = require("fs")
 const multer = require("multer")
 const upload = multer({dest: 'public'})
 const client = require("./mongodb")
+const ObjectId = require("mongodb").ObjectId
+
+
+
+//get single user
+routers.get("/users/:id", async (req, res) => {
+  try {
+    const db = client.db("latihan")
+    const user = await db.collection("users").findOne({_id: new ObjectId (req.params.id)})
+    res.status(200).json({
+      status: "success",
+      message: "single user",
+      data: user
+    })
+  } catch (error){
+    res.status(500).json({
+      status: "failed",
+      message: error.message,
+    })
+  }
+})
+
+//insert user
+routers.post("/users", async (req, res) => {
+  try {
+    const db = client.db("latihan")
+    const user = await db.collection("users").insertOne(req.body)
+    res.status(200).json({
+      status: "success",
+      message: "add user",
+      data: user
+    })
+  } catch (error){
+    res.status(500).json({
+      status: "failed",
+      message: error.message,
+    })
+  }
+})
+
+//update user
+routers.put("/users/:id", async (req, res) => {
+  try {
+    const db = client.db("latihan")
+    const user = await db.collection("users").updateOne({_id: new ObjectId (req.params.id)}, {$set: req.body})
+    res.status(200).json({
+      status: "success",
+      message: "update user",
+      data: user
+    })
+  } catch (error){
+    res.status(500).json({
+      status: "failed",
+      message: error.message,
+    })
+  }
+})
+//delete user
+routers.delete("/users/:id", async (req, res) => {
+  try {
+    const db = client.db("latihan")
+    const user = await db.collection("users").deleteOne({_id: new ObjectId (req.params.id)})
+    res.status(200).json({
+      status: "success",
+      message: "delete user",
+      data: user
+    })
+  } catch (error){
+    res.status(500).json({
+      status: "failed",
+      message: error.message,
+    })
+  }
+})
+
+//get order user (join/aggregate)
+routers.get("/users/:id/orders", async (req, res) => {
+  try {
+    const db = client.db("latihan")
+    const user = await db.collection("users").aggregate([
+      {
+        $match: {_id: new ObjectId (req.params.id)}
+      },
+      {
+        $lookup: {
+          from: "orders",
+          localField: "_id",
+          foreignField: "user_id",
+          as: "orders"
+        }
+      }
+    ]).toArray()
+    res.status(200).json({
+      status: "success",
+      message: "user orders",
+      data: user
+    })
+  } catch (error){
+    res.status(500).json({
+      status: "failed",
+      message: error.message,
+    })
+  }
+})
 
 
 routers.get("/users", async (req, res) => {
